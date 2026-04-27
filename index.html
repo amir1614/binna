@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Binna — Saudi Construction Feasibility Analyzer</title>
+  <meta name="description" content="AI-powered construction feasibility and risk analysis for Saudi Arabia projects." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <nav>
+    <a class="logo" href="#top" aria-label="Binna home">
+      <span class="logo-mark">بن</span>
+      <span>
+        <span class="logo-text">Binna</span>
+        <span class="logo-ar">بنّا</span>
+      </span>
+    </a>
+    <div class="nav-actions">
+      <button class="icon-button" id="language-toggle" type="button" aria-label="Switch language">ع</button>
+      <span class="nav-badge" data-i18n="beta">Free Beta</span>
+    </div>
+  </nav>
+
+  <main id="top">
+    <section class="hero">
+      <div class="hero-tag">
+        <span class="status-dot"></span>
+        <span data-i18n="heroTag">Saudi Arabia · Vision 2030</span>
+      </div>
+      <h1 data-i18n="headline">Know if your project is feasible before you build</h1>
+      <p data-i18n="subhead">AI-powered feasibility and risk analysis tailored to Saudi regulations, Baladiya requirements, and Vision 2030 zoning rules.</p>
+      <p class="hero-ar">محلل جدوى البناء للمشاريع السعودية — مدعوم بالذكاء الاصطناعي</p>
+      <div class="stats" aria-label="Product highlights">
+        <div class="stat">
+          <span class="stat-num">30s</span>
+          <span class="stat-label" data-i18n="statTime">Analysis time</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">4</span>
+          <span class="stat-label" data-i18n="statRisk">Risk dimensions</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num" id="reports-left">3</span>
+          <span class="stat-label" data-i18n="statReports">Free reports left</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="workspace">
+      <div class="tabs" role="tablist" aria-label="Binna workspace">
+        <button class="tab active" type="button" data-panel="analyzer" role="tab" aria-selected="true" data-i18n="tabAnalyze">Analyze</button>
+        <button class="tab" type="button" data-panel="map" role="tab" aria-selected="false" data-i18n="tabMap">Map</button>
+        <button class="tab" type="button" data-panel="intelligence" role="tab" aria-selected="false" data-i18n="tabIntelligence">Intelligence</button>
+        <button class="tab" type="button" data-panel="history" role="tab" aria-selected="false" data-i18n="tabHistory">History</button>
+        <button class="tab" type="button" data-panel="plans" role="tab" aria-selected="false" data-i18n="tabPlans">Plans</button>
+      </div>
+
+      <section id="panel-analyzer" class="panel active" role="tabpanel">
+        <form id="project-form" class="form-wrap">
+          <div class="form-header">
+            <h2 data-i18n="projectDetails">Project details</h2>
+            <span class="step-badge" data-i18n="proxyReady">Secure API proxy ready</span>
+          </div>
+          <div class="form-body">
+            <div class="assist-grid">
+              <section class="assist-card">
+                <div>
+                  <h3 data-i18n="docUploadTitle">Document intake</h3>
+                  <p data-i18n="docUploadText">Upload a deed, municipality letter, or notes file to extract clues and flag risks.</p>
+                </div>
+                <label class="file-drop" for="document-upload">
+                  <span data-i18n="docUploadCta">Choose document</span>
+                  <input id="document-upload" type="file" accept=".txt,.pdf,.doc,.docx,.dwg,.jpg,.jpeg,.png" />
+                </label>
+                <div id="document-findings" class="mini-list"></div>
+              </section>
+
+              <section class="assist-card">
+                <div>
+                  <h3 data-i18n="voiceTitle">Arabic voice input</h3>
+                  <p data-i18n="voiceText">Speak project details in Arabic or English and Binna will draft the context.</p>
+                </div>
+                <button class="btn-secondary" id="voice-input" type="button" data-i18n="voiceCta">Start voice input</button>
+                <div id="voice-status" class="mini-note" data-i18n="voiceIdle">Ready for speech</div>
+              </section>
+
+              <section class="assist-card">
+                <div>
+                  <h3 data-i18n="costTitle">Live cost range</h3>
+                  <p data-i18n="costText">Rough Saudi construction estimate based on type, size, and city.</p>
+                </div>
+                <div id="live-cost" class="cost-range">Enter BUA to estimate</div>
+                <div class="mini-note" data-i18n="costNote">Concept range only, excluding land and financing.</div>
+              </section>
+            </div>
+
+            <div class="grid2">
+              <div class="field">
+                <label for="city" data-i18n="city">City / Region</label>
+                <div class="select-wrap">
+                  <select id="city" name="city" required>
+                    <option value="" data-i18n="selectCity">Select city</option>
+                    <option>Riyadh</option>
+                    <option>Jeddah</option>
+                    <option>NEOM / Tabuk</option>
+                    <option>Dammam / Eastern Province</option>
+                    <option>Mecca</option>
+                    <option>Medina</option>
+                    <option>Qiddiya</option>
+                    <option>Red Sea Project</option>
+                    <option>Diriyah</option>
+                    <option>Al Khobar</option>
+                    <option>Other</option>
+                  </select>
+                </div>
+              </div>
+              <div class="field">
+                <label for="type" data-i18n="type">Project type</label>
+                <div class="select-wrap">
+                  <select id="type" name="type" required>
+                    <option value="" data-i18n="selectType">Select type</option>
+                    <option>Residential villa</option>
+                    <option>Apartment complex</option>
+                    <option>Commercial building</option>
+                    <option>Mixed-use development</option>
+                    <option>Industrial facility</option>
+                    <option>Hotel / hospitality</option>
+                    <option>Retail / mall</option>
+                    <option>Warehouse / logistics</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid3">
+              <div class="field">
+                <label for="plot" data-i18n="plot">Plot area (m²)</label>
+                <input type="number" id="plot" name="plot" placeholder="e.g. 500" min="1" />
+              </div>
+              <div class="field">
+                <label for="bua" data-i18n="bua">Built-up area (m²)</label>
+                <input type="number" id="bua" name="bua" placeholder="e.g. 1200" min="1" />
+              </div>
+              <div class="field">
+                <label for="floors" data-i18n="floors">Floors</label>
+                <input type="number" id="floors" name="floors" placeholder="e.g. 4" min="1" max="100" />
+              </div>
+            </div>
+
+            <div class="grid2">
+              <div class="field">
+                <label for="budget" data-i18n="budget">Budget (SAR)</label>
+                <div class="select-wrap">
+                  <select id="budget" name="budget">
+                    <option value="" data-i18n="selectRange">Select range</option>
+                    <option>Under 500K SAR</option>
+                    <option>500K - 2M SAR</option>
+                    <option>2M - 10M SAR</option>
+                    <option>10M - 50M SAR</option>
+                    <option>50M - 200M SAR</option>
+                    <option>Over 200M SAR</option>
+                  </select>
+                </div>
+              </div>
+              <div class="field">
+                <label for="zone" data-i18n="zone">Zoning classification</label>
+                <div class="select-wrap">
+                  <select id="zone" name="zone">
+                    <option value="" data-i18n="selectZone">Select zone</option>
+                    <option>Residential (سكني)</option>
+                    <option>Commercial (تجاري)</option>
+                    <option>Industrial (صناعي)</option>
+                    <option>Mixed-use (متعدد الاستخدامات)</option>
+                    <option>Unknown / need to check</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="details" data-i18n="details">Additional context (optional)</label>
+              <textarea id="details" name="details" data-i18n-placeholder="detailsPlaceholder" placeholder="Near a highway, adjacent to mosque, heritage area, giga-project zone, previous use of land, or specific concerns"></textarea>
+            </div>
+          </div>
+          <button class="analyze-btn" id="analyze-button" type="submit" data-i18n="analyze">Analyze project feasibility</button>
+        </form>
+        <div class="preview-row">
+          <button class="btn-secondary" id="sample-report" type="button" data-i18n="sampleReport">Preview sample report</button>
+          <span class="mini-note" data-i18n="sampleReportNote">Use this to see the output page before the AI key is connected.</span>
+        </div>
+        <div id="results-section" class="results-section" hidden></div>
+      </section>
+
+      <section id="panel-map" class="panel" role="tabpanel">
+        <div class="map-shell">
+          <div class="section-heading">
+            <div>
+              <h2 data-i18n="mapTitle">Saudi development map</h2>
+              <p data-i18n="mapSubtitle">Zoom into Saudi cities, roads, districts, and building-level map detail where available.</p>
+            </div>
+            <span class="step-badge" data-i18n="mapBadge">Interactive</span>
+          </div>
+          <div class="map-layout">
+            <div class="map-stack">
+              <div class="map-toolbar" aria-label="Saudi map quick regions">
+                <button class="map-chip selected" type="button" data-region="riyadh">Riyadh</button>
+                <button class="map-chip" type="button" data-region="jeddah">Jeddah</button>
+                <button class="map-chip" type="button" data-region="neom">NEOM</button>
+                <button class="map-chip" type="button" data-region="eastern">Eastern</button>
+                <button class="map-chip" type="button" data-region="qiddiya">Qiddiya</button>
+                <button class="map-chip" type="button" data-region="redsea">Red Sea</button>
+              </div>
+              <div class="map-canvas">
+                <div id="saudi-map" aria-label="Zoomable map of Saudi Arabia"></div>
+                <div class="map-hint" data-i18n="mapHint">Use + / - or pinch to move from national view into streets and buildings.</div>
+              </div>
+            </div>
+            <aside class="map-detail" id="map-detail" aria-live="polite"></aside>
+          </div>
+        </div>
+      </section>
+
+      <section id="panel-intelligence" class="panel" role="tabpanel">
+        <div class="intel-board">
+          <section class="section-card">
+            <div class="section-heading inline">
+              <div>
+                <h2 data-i18n="intelTitle">Construction intelligence layer</h2>
+                <p data-i18n="intelSubtitle">Workflow modules that turn a one-time feasibility report into a daily tool.</p>
+              </div>
+            </div>
+            <div class="feature-grid">
+              <article class="feature-card">
+                <span class="feature-kicker">01</span>
+                <h3 data-i18n="featureDocs">AI document review</h3>
+                <p data-i18n="featureDocsText">Extract deed constraints, municipality comments, drawing notes, setbacks, easements, and missing approvals.</p>
+              </article>
+              <article class="feature-card">
+                <span class="feature-kicker">02</span>
+                <h3 data-i18n="featureZoning">Real zoning lookup</h3>
+                <p data-i18n="featureZoningText">Drop a pin on the map, then connect Balady/Amanah GIS layers for classification and district rules.</p>
+              </article>
+              <article class="feature-card">
+                <span class="feature-kicker">03</span>
+                <h3 data-i18n="featureBenchmarks">Comparable projects</h3>
+                <p data-i18n="featureBenchmarksText">Show similar approvals from anonymized project history as Binna collects real user data.</p>
+              </article>
+              <article class="feature-card">
+                <span class="feature-kicker">04</span>
+                <h3 data-i18n="featureWhatsApp">WhatsApp delivery</h3>
+                <p data-i18n="featureWhatsAppText">Prepare a formatted report summary for WhatsApp Business API delivery.</p>
+              </article>
+            </div>
+          </section>
+
+          <section class="workflow-grid">
+            <article class="section-card">
+              <h3 data-i18n="trackerTitle">Permit tracker</h3>
+              <div class="tracker">
+                <button class="tracker-step done" type="button">Applied</button>
+                <button class="tracker-step active" type="button">Under Review</button>
+                <button class="tracker-step" type="button">Civil Defense</button>
+                <button class="tracker-step" type="button">Approved</button>
+              </div>
+            </article>
+
+            <article class="section-card">
+              <h3 data-i18n="whatsappTitle">WhatsApp report</h3>
+              <div class="field compact">
+                <label for="whatsapp-number" data-i18n="whatsappLabel">Recipient number</label>
+                <input id="whatsapp-number" type="tel" placeholder="+966 5X XXX XXXX" />
+              </div>
+              <button class="btn-primary" id="whatsapp-draft" type="button" data-i18n="whatsappDraft">Prepare WhatsApp draft</button>
+              <p id="whatsapp-status" class="mini-note"></p>
+            </article>
+
+            <article class="section-card">
+              <h3 data-i18n="marketTitle">Verified consultants</h3>
+              <div id="consultant-list" class="consultant-list"></div>
+            </article>
+
+            <article class="section-card">
+              <h3 data-i18n="collabTitle">Team collaboration</h3>
+              <div class="comment-box">
+                <input id="team-comment" type="text" data-i18n-placeholder="commentPlaceholder" placeholder="Add a note for architect, engineer, or investor" />
+                <button class="btn-secondary" id="add-comment" type="button" data-i18n="addComment">Add</button>
+              </div>
+              <div id="comment-list" class="mini-list"></div>
+            </article>
+
+            <article class="section-card">
+              <h3 data-i18n="alertsTitle">Risk change alerts</h3>
+              <label class="toggle-row">
+                <input id="risk-alerts" type="checkbox" />
+                <span data-i18n="alertsText">Notify me when regulations or zoning assumptions change for saved projects.</span>
+              </label>
+              <p id="alerts-status" class="mini-note"></p>
+            </article>
+
+            <article class="section-card">
+              <h3 data-i18n="benchmarksTitle">Comparable approvals</h3>
+              <div id="benchmark-list" class="mini-list"></div>
+            </article>
+          </section>
+        </div>
+      </section>
+
+      <section id="panel-history" class="panel" role="tabpanel">
+        <div class="section-card">
+          <div class="section-heading">
+            <h2 data-i18n="historyTitle">Saved reports</h2>
+            <button class="btn-secondary small" id="clear-history" type="button" data-i18n="clearHistory">Clear history</button>
+          </div>
+          <div id="history-list"></div>
+        </div>
+      </section>
+
+      <section id="panel-plans" class="panel" role="tabpanel">
+        <div class="plan-grid">
+          <article class="plan-card">
+            <h2 data-i18n="freePlan">Free</h2>
+            <p class="price">0 SAR</p>
+            <p data-i18n="freePlanText">3 feasibility reports for early evaluation.</p>
+            <button class="btn-secondary" id="reset-free-counter" type="button" data-i18n="resetCounter">Reset beta counter</button>
+          </article>
+          <article class="plan-card featured">
+            <h2 data-i18n="proPlan">Pro</h2>
+            <p class="price">200 SAR<span data-i18n="month">/month</span></p>
+            <p data-i18n="proPlanText">Unlimited reports, saved history, PDF export, and email delivery.</p>
+            <button class="btn-primary" type="button" data-i18n="joinWaitlist">Join waitlist</button>
+          </article>
+        </div>
+      </section>
+    </section>
+
+    <p class="disclaimer" data-i18n="disclaimer">This tool is AI-generated and for informational purposes only. Always verify findings with a licensed Saudi engineer and your local Baladiya office before proceeding.</p>
+  </main>
+
+  <footer>
+    <p>Binna · Built for Saudi Arabia · <a href="mailto:hello@binna.sa">hello@binna.sa</a></p>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="/app.js" type="module"></script>
+</body>
+</html>
