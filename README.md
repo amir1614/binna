@@ -12,6 +12,19 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+## Deploy on Render
+
+Binna needs a Render **Web Service**, not a Static Site, because `/api/analyze` runs through `server.js`.
+
+Use these settings:
+
+- Service type: Web Service
+- Build command: `npm install`
+- Start command: `npm start`
+- Environment variable: `ANTHROPIC_API_KEY`
+
+The included `render.yaml` can also be used as a Render Blueprint.
+
 ## What is included
 
 - Static HTML/CSS/JS frontend

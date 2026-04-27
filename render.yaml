@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: binna
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 22.17.0
+      - key: ANTHROPIC_API_KEY
+        sync: false

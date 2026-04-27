@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "node --env-file-if-exists=.env server.js",
-    "start": "node --env-file-if-exists=.env server.js"
+    "start": "node server.js",
+    "build": "echo \"No build step required\""
   },
   "engines": {
     "node": ">=20"
