@@ -55,7 +55,6 @@ const translations = {
     alertsTitle: "Risk change alerts",
     alertsText: "Notify me when regulations or zoning assumptions change for saved projects.",
     benchmarksTitle: "Comparable approvals",
-    proxyReady: "Secure API proxy ready",
     city: "City / Region",
     selectCity: "Select city",
     type: "Project type",
@@ -72,13 +71,13 @@ const translations = {
     analyze: "Analyze project feasibility",
     sampleReport: "Preview sample report",
     sampleReportNote: "Use this to see the output page before the AI key is connected.",
-    shareReport: "Copy report link",
-    shareCopied: "Report link copied. In production this should be backed by a public report URL.",
+    shareReport: "Copy link",
+    shareCopied: "Report link copied.",
     confidence: "Confidence",
     deterministicFlags: "Automatic validation flags",
     dataFreshness: "Data freshness",
     analyzing: "Analyzing your project...",
-    loading: "Analyzing Saudi regulations, zoning rules, and risk factors...",
+    loading: "Analyzing your project...",
     permitTimeline: "Permit timeline",
     visionNote: "Vision 2030",
     riskBreakdown: "Risk breakdown",
@@ -156,7 +155,6 @@ const translations = {
     alertsTitle: "تنبيهات تغير المخاطر",
     alertsText: "نبهني عند تغير اللوائح أو افتراضات النطاق للمشاريع المحفوظة.",
     benchmarksTitle: "موافقات مشابهة",
-    proxyReady: "الاتصال الآمن جاهز",
     city: "المدينة / المنطقة",
     selectCity: "اختر المدينة",
     type: "نوع المشروع",
@@ -173,13 +171,13 @@ const translations = {
     analyze: "حلل جدوى المشروع",
     sampleReport: "معاينة تقرير تجريبي",
     sampleReportNote: "استخدمه لرؤية صفحة النتائج قبل ربط مفتاح الذكاء الاصطناعي.",
-    shareReport: "نسخ رابط التقرير",
-    shareCopied: "تم نسخ رابط التقرير. في النسخة الإنتاجية يجب حفظه كرابط عام.",
+    shareReport: "نسخ الرابط",
+    shareCopied: "تم نسخ رابط التقرير.",
     confidence: "درجة الثقة",
     deterministicFlags: "تنبيهات التحقق الآلي",
     dataFreshness: "تحديث البيانات",
     analyzing: "جار تحليل المشروع...",
-    loading: "جار تحليل اللوائح السعودية ومتطلبات البلدية وعوامل المخاطر...",
+    loading: "جار تحليل مشروعك...",
     permitTimeline: "مدة التصاريح",
     visionNote: "رؤية 2030",
     riskBreakdown: "تفصيل المخاطر",
@@ -583,7 +581,7 @@ function analyzeDocumentText(text, fileName = "") {
   if (/easement|right of way|حق مرور|حرم/.test(source)) findings.push(["warn", "Possible easement or right-of-way restriction detected."]);
   if (/heritage|تراث|historic|تاريخ/.test(source)) findings.push(["warn", "Heritage or historic-area language detected. Expect additional review."]);
   if (/civil defense|الدفاع المدني|fire/.test(source)) findings.push(["good", "Civil Defense appears in the document. Include fire strategy early."]);
-  if (!findings.length) findings.push(["good", "Document received. No obvious keyword risks found in this MVP scan."]);
+  if (!findings.length) findings.push(["good", "Document received. No obvious keyword risks found."]);
 
   const details = document.getElementById("details");
   const note = `Document scan (${fileName || "uploaded file"}): ${findings.map((item) => item[1]).join(" ")}`;
@@ -742,7 +740,9 @@ function buildResultFromSBCPayload(payload, project) {
   return {
     feasibility_score: score,
     verdict,
-    summary: payload.report?.split("\n").find((line) => line && !line.startsWith("#")) || `${project.type} in ${project.city} was checked against deterministic SBC/Baladiya rules.`,
+    summary: hasFlags
+      ? `${project.type} in ${project.city} needs review before submission. The automated Saudi code checks found one or more approval risks that should be resolved with the design team.`
+      : `${project.type} in ${project.city} is ready for early-stage review. The automated Saudi code checks did not find a blocking violation from the provided inputs.`,
     estimated_permit_timeline: timeline,
     risks: {
       compliance: {
@@ -772,7 +772,7 @@ function buildResultFromSBCPayload(payload, project) {
       ...structured.warnings,
       ...structured.passed
     ].slice(0, 5),
-    vision_2030_note: "This report is generated from deterministic Saudi Building Code and Baladiya rules before any narrative AI layer.",
+    vision_2030_note: "Early feasibility is aligned with Saudi Arabia's push for faster, more predictable development workflows.",
     deterministic_flags: [
       ...structured.flags.map((text) => ({ level: "warn", text })),
       ...structured.warnings.map((text) => ({ level: "warn", text })),
@@ -850,18 +850,23 @@ function renderResults(result, project, shouldScroll = true, reportId = latestRe
     </div>
   `).join("");
 
+  const numericScore = Number(result.feasibility_score) || 0;
+  const scoreClass = numericScore >= 75 ? "low" : numericScore >= 55 ? "medium" : "high";
+  const costDetail = risks.cost?.detail || "Cost range will appear after analysis.";
+  const timelineDetail = `${result.estimated_permit_timeline || "Timeline unavailable"}. ${risks.timeline?.detail || ""}`;
+  const validationFlags = result.deterministic_flags?.length
+    ? result.deterministic_flags
+    : [{ level: "good", text: "No automatic FAR, city, or budget red flags triggered." }];
+
   resultsEl.hidden = false;
   resultsEl.innerHTML = `
     <div class="results-wrap">
       <div class="share-box">
         <strong>Shareable report link</strong>
-        <p>This MVP link reopens the saved report on this device. Production should store the report server-side so investors and clients can open it anywhere.</p>
-        <div class="actions-row">
-          <button class="btn-secondary" type="button" data-action="share">${escapeHtml(t("shareReport"))}</button>
-        </div>
+        <button class="btn-secondary small" type="button" data-action="share">${escapeHtml(t("shareReport"))}</button>
       </div>
 
-      <div class="score-card">
+      <div class="score-card score-${scoreClass}">
         <div class="score-circle">
           <span class="score-num">${escapeHtml(result.feasibility_score)}</span>
           <span class="score-denom">/ 100</span>
@@ -874,6 +879,19 @@ function renderResults(result, project, shouldScroll = true, reportId = latestRe
         </div>
       </div>
 
+      <div class="insight-grid">
+        <div class="section-card metric-card">
+          <h3>Cost range</h3>
+          <div class="range-track"><span style="width: 68%"></span></div>
+          <p>${escapeHtml(costDetail)}</p>
+        </div>
+        <div class="section-card metric-card">
+          <h3>${escapeHtml(t("permitTimeline"))}</h3>
+          <div class="range-track timeline"><span style="width: 54%"></span></div>
+          <p>${escapeHtml(timelineDetail)}</p>
+        </div>
+      </div>
+
       <div class="section-card">
         <h3>${escapeHtml(t("riskBreakdown"))}</h3>
         <div class="risk-grid">${riskCards}</div>
@@ -881,7 +899,7 @@ function renderResults(result, project, shouldScroll = true, reportId = latestRe
 
       <div class="section-card">
         <h3>${escapeHtml(t("deterministicFlags"))}</h3>
-        ${(result.deterministic_flags?.length ? result.deterministic_flags : [{ level: "good", text: "No automatic FAR, city, or budget red flags triggered." }]).map((flag) => `<div class="mini-item ${escapeHtml(flag.level === "high" ? "warn" : flag.level)}">${escapeHtml(flag.text)}</div>`).join("")}
+        ${validationFlags.map((flag) => `<div class="mini-item ${escapeHtml(flag.level === "high" ? "warn" : flag.level)}">${escapeHtml(flag.text)}</div>`).join("")}
       </div>
 
       <div class="section-card">
@@ -1260,7 +1278,7 @@ document.getElementById("add-comment").addEventListener("click", () => {
 
 document.getElementById("risk-alerts").addEventListener("change", (event) => {
   document.getElementById("alerts-status").textContent = event.target.checked
-    ? "Alerts enabled locally. Production should monitor Balady/Amanah rule sources and saved project assumptions."
+    ? "Alerts enabled for this project."
     : "";
 });
 

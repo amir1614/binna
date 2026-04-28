@@ -66,8 +66,8 @@
             <h2 data-i18n="projectDetails">Project details</h2>
           </div>
           <div class="form-body">
-            <div class="assist-grid" style="grid-template-columns: 1fr;">
-              <section class="assist-card" style="max-width: 360px;">
+            <div class="assist-grid">
+              <section class="assist-card">
                 <div>
                   <h3>Live cost estimate</h3>
                   <p>Rough Saudi construction estimate based on type, size, and city.</p>
@@ -130,7 +130,7 @@
               </div>
             </div>
 
-            <div class="grid2">
+            <div class="grid1">
               <div class="field">
                 <label for="budget" data-i18n="budget">Budget (SAR)</label>
                 <div class="select-wrap">
@@ -145,7 +145,12 @@
                   </select>
                 </div>
               </div>
-              <div class="field">
+            </div>
+
+            <div class="zoning-note">
+              <strong>Zoning assessment</strong>
+              <span>Zoning will be assessed based on your inputs — verify with your municipality.</span>
+              <div class="field visually-hidden-field">
                 <label for="zone" data-i18n="zone">Zoning classification</label>
                 <div class="select-wrap">
                   <select id="zone" name="zone">
@@ -315,7 +320,7 @@
   </main>
 
   <footer>
-    <p>Binna · Built for Saudi Arabia · <a href="mailto:hello@binna.sa">hello@binna.sa</a></p>
+    <p>Binna · Built for Saudi Arabia</p>
   </footer>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
