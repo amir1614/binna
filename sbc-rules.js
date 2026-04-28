@@ -318,4 +318,113 @@ function runSBCChecks({ city, type, plot, bua, floors, zone, budget }) {
   return results;
 }
 
-module.exports = { runSBCChecks, COST_BENCHMARKS, FAR_LIMITS };
+function calculateRiskScore(inputs, checks) {
+  const { zone, floors, budget, type } = inputs;
+  const deductions = [];
+  const passing = [];
+  let score = 100;
+
+  // ── FAR (40 points) ──────────────────────────────────────────
+  if (!checks.farCalculated || !checks.farLimit) {
+    score -= 20;
+    deductions.push({ category: 'FAR', points: 20, reason: 'FAR could not be calculated — plot area or BUA missing' });
+  } else {
+    const farRatio = checks.farCalculated / checks.farLimit;
+    if (farRatio > 1.5) {
+      score -= 40;
+      deductions.push({ category: 'FAR', points: 40, reason: `Critical FAR violation — your FAR of ${checks.farCalculated} is more than 1.5x the zone limit of ${checks.farLimit}` });
+    } else if (farRatio > 1.0) {
+      score -= 25;
+      deductions.push({ category: 'FAR', points: 25, reason: `FAR violation — your FAR of ${checks.farCalculated} exceeds the zone limit of ${checks.farLimit}` });
+    } else if (farRatio > 0.9) {
+      score -= 5;
+      deductions.push({ category: 'FAR', points: 5, reason: `FAR is within 10% of the limit — minor design changes could cause a violation` });
+    } else {
+      passing.push({ category: 'FAR', reason: `FAR of ${checks.farCalculated} is comfortably within the zone limit of ${checks.farLimit}` });
+    }
+  }
+
+  // ── Floors (15 points) ───────────────────────────────────────
+  const floorsNum = parseInt(floors) || 0;
+  const maxFloors = MAX_FLOORS[zone] || 4;
+  if (floorsNum > 0) {
+    const floorDiff = floorsNum - maxFloors;
+    if (floorDiff > 2) {
+      score -= 15;
+      deductions.push({ category: 'Floors', points: 15, reason: `${floorsNum} floors significantly exceeds the zone maximum of ${maxFloors}` });
+    } else if (floorDiff > 0) {
+      score -= 10;
+      deductions.push({ category: 'Floors', points: 10, reason: `${floorsNum} floors exceeds the zone maximum of ${maxFloors}` });
+    } else if (floorDiff === 0) {
+      score -= 3;
+      deductions.push({ category: 'Floors', points: 3, reason: `${floorsNum} floors is at the zone maximum — confirm with municipality` });
+    } else {
+      passing.push({ category: 'Floors', reason: `${floorsNum} floors is within the zone maximum of ${maxFloors}` });
+    }
+  } else {
+    score -= 5;
+    deductions.push({ category: 'Floors', points: 5, reason: 'Floors not provided — cannot verify height compliance' });
+  }
+
+  // ── Civil Defense (15 points) ────────────────────────────────
+  const complexTypes = ['Hotel / hospitality', 'Retail / mall', 'Mixed-use development'];
+  if (checks.civilDefenseRequired) {
+    if (complexTypes.includes(type)) {
+      score -= 15;
+      deductions.push({ category: 'Civil Defense', points: 15, reason: 'Civil Defense review mandatory — complex process for this project type, engage specialist before design' });
+    } else {
+      score -= 8;
+      deductions.push({ category: 'Civil Defense', points: 8, reason: 'Civil Defense review required — factor 4-8 weeks into your permit timeline' });
+    }
+  } else {
+    passing.push({ category: 'Civil Defense', reason: 'Civil Defense review not required for this project scope' });
+  }
+
+  // ── Zoning confidence (15 points) ────────────────────────────
+  if (!zone || zone === '') {
+    score -= 15;
+    deductions.push({ category: 'Zoning', points: 15, reason: 'No zone provided — all checks used conservative defaults, actual limits may differ' });
+  } else if (zone === 'Unknown / need to check') {
+    score -= 15;
+    deductions.push({ category: 'Zoning', points: 15, reason: 'Zoning unverified — all compliance checks used conservative defaults' });
+  } else {
+    score -= 5;
+    deductions.push({ category: 'Zoning', points: 5, reason: 'Zoning is user-provided — not verified against official Baladiya GIS data' });
+  }
+
+  // ── Budget vs cost estimate (15 points) ──────────────────────
+  const budgetMidpoints = {
+    'Under 500K SAR':     500000,
+    '500K - 2M SAR':      1250000,
+    '2M - 10M SAR':       6000000,
+    '10M - 50M SAR':      30000000,
+    '50M - 200M SAR':     125000000,
+    'Over 200M SAR':      200000000,
+  };
+  const budgetMid = budgetMidpoints[budget];
+  if (!budgetMid) {
+    score -= 5;
+    deductions.push({ category: 'Budget', points: 5, reason: 'Budget not provided — cost feasibility cannot be assessed' });
+  } else if (checks.costRange) {
+    if (budgetMid < checks.costRange.low) {
+      score -= 15;
+      deductions.push({ category: 'Budget', points: 15, reason: `Budget of ~${budgetMid.toLocaleString()} SAR appears insufficient — estimated construction cost starts at ${checks.costRange.low.toLocaleString()} SAR` });
+    } else if (budgetMid < checks.costRange.low * 1.2) {
+      score -= 8;
+      deductions.push({ category: 'Budget', points: 8, reason: 'Budget is tight — recommend adding 15-20% contingency on top of current estimate' });
+    } else {
+      passing.push({ category: 'Budget', reason: `Budget appears sufficient for the estimated construction cost range` });
+    }
+  }
+
+  // ── Final score and risk level ────────────────────────────────
+  score = Math.max(0, score);
+  let riskLevel, riskColor;
+  if (score >= 80) { riskLevel = 'Low Risk';    riskColor = 'green'; }
+  else if (score >= 50) { riskLevel = 'Medium Risk'; riskColor = 'amber'; }
+  else { riskLevel = 'High Risk';   riskColor = 'red'; }
+
+  return { score, riskLevel, riskColor, deductions, passing };
+}
+
+module.exports = { runSBCChecks, calculateRiskScore, COST_BENCHMARKS, FAR_LIMITS };

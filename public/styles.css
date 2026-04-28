@@ -707,6 +707,68 @@ nav {
   margin-bottom: 16px;
 }
 
+.score-breakdown-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.score-breakdown h4 {
+  margin-bottom: 10px;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 750;
+}
+
+.score-breakdown-item {
+  padding: 13px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.score-breakdown-item:last-child {
+  border-bottom: 0;
+}
+
+.score-breakdown-item div {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.score-breakdown-item strong {
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.score-breakdown-item span {
+  color: var(--red);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.score-breakdown-item p {
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.score-breakdown-item.passed div {
+  justify-content: flex-start;
+}
+
+.score-breakdown-item.passed .checkmark {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--green-soft);
+  color: var(--green);
+}
+
 .metric-card p {
   margin-top: 12px;
   color: var(--text-muted);
@@ -1375,7 +1437,8 @@ footer a {
   .compare-grid,
   .map-layout,
   .map-metrics,
-  .insight-grid {
+  .insight-grid,
+  .score-breakdown-grid {
     grid-template-columns: 1fr;
   }
 

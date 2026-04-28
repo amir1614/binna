@@ -10,7 +10,7 @@
 const express = require('express');
 const path    = require('path');
 const Anthropic = require('@anthropic-ai/sdk');
-const { runSBCChecks } = require('./sbc-rules');
+const { runSBCChecks, calculateRiskScore } = require('./sbc-rules');
 
 const app    = express();
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
@@ -52,6 +52,7 @@ app.post('/api/analyze', async (req, res) => {
 
   // Step 1: Run the SBC rules engine — pure logic, no AI
   const checks = runSBCChecks({ city, type, plot, bua, floors, zone, budget });
+  const riskScore = calculateRiskScore({ city, type, plot, bua, floors, zone, budget }, checks);
 
   // Step 2: Build a fact-locked prompt — Claude explains, never invents
   const verifiedFacts = `
@@ -67,6 +68,12 @@ Compliance Results:
 - Warnings: ${checks.warnings.length > 0 ? checks.warnings.join(' | ') : 'None'}
 - Civil Defense required: ${checks.civilDefenseRequired ? 'YES' : 'Not mandatory for this scope'}
 - Parking spaces required: ${checks.parkingRequired ? `~${checks.parkingRequired} spaces` : 'Not calculated'}
+
+Risk Score:
+- Score: ${riskScore.score}/100
+- Risk level: ${riskScore.riskLevel}
+- Deductions: ${riskScore.deductions.map(d => `${d.category} (-${d.points}pts): ${d.reason}`).join(' | ')}
+- Passing: ${riskScore.passing.map(p => `${p.category}: ${p.reason}`).join(' | ')}
 
 Cost Estimate:
 ${checks.costRange
@@ -123,6 +130,7 @@ FORMAT your report with these exact sections:
     farLimit:        checks.farLimit,
     civilDefense:    checks.civilDefenseRequired,
     parking:         checks.parkingRequired,
+    riskScore:       riskScore,
     dataSource:      checks.dataSource,
   };
 

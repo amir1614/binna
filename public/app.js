@@ -719,10 +719,9 @@ function normalizeAnalysisResult(result, project) {
 
 function buildResultFromSBCPayload(payload, project) {
   const structured = payload.structured;
+  const riskScore = structured.riskScore;
   const hasFlags = structured.flags.length > 0;
   const hasWarnings = structured.warnings.length > 0;
-  const score = hasFlags ? 48 : hasWarnings ? 72 : 86;
-  const verdict = hasFlags ? "High Risk" : hasWarnings ? "Proceed with Caution" : "Feasible";
   const cost = structured.costRange
     ? `${structured.costRange.low.toLocaleString()} - ${structured.costRange.high.toLocaleString()} SAR (${structured.costRange.perSqmLow.toLocaleString()} - ${structured.costRange.perSqmHigh.toLocaleString()} SAR/m²)`
     : "Cost range could not be calculated because BUA or project type is missing.";
@@ -738,8 +737,8 @@ function buildResultFromSBCPayload(payload, project) {
     : structured.passed.find((item) => item.includes("FAR")) || "No FAR violation detected by the SBC rules engine.";
 
   return {
-    feasibility_score: score,
-    verdict,
+    feasibility_score: riskScore.score,
+    verdict: riskScore.riskLevel,
     summary: hasFlags
       ? `${project.type} in ${project.city} needs review before submission. The automated Saudi code checks found one or more approval risks that should be resolved with the design team.`
       : `${project.type} in ${project.city} is ready for early-stage review. The automated Saudi code checks did not find a blocking violation from the provided inputs.`,
@@ -778,6 +777,7 @@ function buildResultFromSBCPayload(payload, project) {
       ...structured.warnings.map((text) => ({ level: "warn", text })),
       ...structured.passed.map((text) => ({ level: "good", text }))
     ],
+    riskScore,
     data_freshness_note: `Data source: ${structured.dataSource}. Verify critical items with your local municipality before proceeding.`
   };
 }
@@ -850,13 +850,31 @@ function renderResults(result, project, shouldScroll = true, reportId = latestRe
     </div>
   `).join("");
 
-  const numericScore = Number(result.feasibility_score) || 0;
-  const scoreClass = numericScore >= 75 ? "low" : numericScore >= 55 ? "medium" : "high";
+  const riskScore = result.riskScore;
+  const scoreClass = riskScore.riskColor === "green" ? "low" : riskScore.riskColor === "amber" ? "medium" : "high";
   const costDetail = risks.cost?.detail || "Cost range will appear after analysis.";
   const timelineDetail = `${result.estimated_permit_timeline || "Timeline unavailable"}. ${risks.timeline?.detail || ""}`;
   const validationFlags = result.deterministic_flags?.length
     ? result.deterministic_flags
     : [{ level: "good", text: "No automatic FAR, city, or budget red flags triggered." }];
+  const deductions = riskScore.deductions.map((item) => `
+    <div class="score-breakdown-item deduction">
+      <div>
+        <strong>${escapeHtml(item.category)}</strong>
+        <span>-${escapeHtml(item.points)}pts</span>
+      </div>
+      <p>${escapeHtml(item.reason)}</p>
+    </div>
+  `).join("");
+  const passing = riskScore.passing.map((item) => `
+    <div class="score-breakdown-item passed">
+      <div>
+        <span class="checkmark">✓</span>
+        <strong>${escapeHtml(item.category)}</strong>
+      </div>
+      <p>${escapeHtml(item.reason)}</p>
+    </div>
+  `).join("");
 
   resultsEl.hidden = false;
   resultsEl.innerHTML = `
@@ -868,14 +886,28 @@ function renderResults(result, project, shouldScroll = true, reportId = latestRe
 
       <div class="score-card score-${scoreClass}">
         <div class="score-circle">
-          <span class="score-num">${escapeHtml(result.feasibility_score)}</span>
+          <span class="score-num">${escapeHtml(riskScore.score)}</span>
           <span class="score-denom">/ 100</span>
         </div>
         <div class="score-info">
-          <div class="score-verdict">${escapeHtml(result.verdict)}</div>
+          <div class="score-verdict">${escapeHtml(riskScore.riskLevel)}</div>
           <div class="score-summary">${escapeHtml(result.summary)}</div>
           <div class="score-pill">${escapeHtml(t("permitTimeline"))}: ${escapeHtml(result.estimated_permit_timeline)}</div>
           ${result.vision_2030_note ? `<div class="score-pill">${escapeHtml(t("visionNote"))}: ${escapeHtml(result.vision_2030_note)}</div>` : ""}
+        </div>
+      </div>
+
+      <div class="section-card score-breakdown">
+        <h3>Score breakdown</h3>
+        <div class="score-breakdown-grid">
+          <div>
+            <h4>Why points were deducted</h4>
+            ${deductions}
+          </div>
+          <div>
+            <h4>What passed</h4>
+            ${passing}
+          </div>
         </div>
       </div>
 
