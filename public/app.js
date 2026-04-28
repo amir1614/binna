@@ -499,32 +499,35 @@ function parseBudgetRange(value = "") {
   return null;
 }
 
-function updateCostEstimate() {
-  const bua = Number(document.getElementById("bua").value || 0);
-  const type = document.getElementById("type").value;
-  const city = document.getElementById("city").value;
+function updateLiveCost() {
+  const city = document.getElementById("city")?.value;
+  const type = document.getElementById("type")?.value;
+  const bua = document.getElementById("bua")?.value;
   const target = document.getElementById("live-cost");
   if (!target) return;
 
-  if (!bua) {
-    target.textContent = language === "ar" ? "أدخل مساحة البناء" : "Enter BUA to estimate";
+  if (!bua || !type) {
+    target.textContent = "Enter BUA to estimate";
     return;
   }
 
-  const cityMultipliers = {
-    Riyadh: 1.08,
-    Jeddah: 1.06,
-    "NEOM / Tabuk": 1.22,
-    "Dammam / Eastern Province": 1.03,
-    Qiddiya: 1.18,
-    "Red Sea Project": 1.28
-  };
-  const benchmark = getCostBenchmarkForType(type);
-  const multiplier = cityMultipliers[city] || 1;
-  const low = Math.round((bua * benchmark.low * multiplier) / 10000) * 10000;
-  const high = Math.round((bua * benchmark.high * multiplier) / 10000) * 10000;
-  target.textContent = `${low.toLocaleString()} - ${high.toLocaleString()} SAR`;
+  fetch(`/api/cost-estimate?city=${encodeURIComponent(city)}&type=${encodeURIComponent(type)}&bua=${bua}`)
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.costRange) {
+        const low = data.costRange.low.toLocaleString("en-SA");
+        const high = data.costRange.high.toLocaleString("en-SA");
+        target.innerHTML = `<strong>${low} - ${high} SAR</strong>`;
+      } else {
+        target.textContent = "Select type to estimate";
+      }
+    })
+    .catch(() => {
+      target.textContent = "Estimate unavailable";
+    });
 }
+
+const updateCostEstimate = updateLiveCost;
 
 function getDeterministicAssessment(project) {
   const flags = [];
@@ -736,6 +739,69 @@ function normalizeAnalysisResult(result, project) {
   normalized.deterministic_flags = assessment.flags;
   normalized.data_freshness_note = normalized.data_freshness_note || DATA_FRESHNESS_NOTE;
   return normalized;
+}
+
+function buildResultFromSBCPayload(payload, project) {
+  const structured = payload.structured;
+  const hasFlags = structured.flags.length > 0;
+  const hasWarnings = structured.warnings.length > 0;
+  const score = hasFlags ? 48 : hasWarnings ? 72 : 86;
+  const verdict = hasFlags ? "High Risk" : hasWarnings ? "Proceed with Caution" : "Feasible";
+  const cost = structured.costRange
+    ? `${structured.costRange.low.toLocaleString()} - ${structured.costRange.high.toLocaleString()} SAR (${structured.costRange.perSqmLow.toLocaleString()} - ${structured.costRange.perSqmHigh.toLocaleString()} SAR/m²)`
+    : "Cost range could not be calculated because BUA or project type is missing.";
+  const timeline = structured.permitTimeline
+    ? `${structured.permitTimeline.minMonths}-${structured.permitTimeline.maxMonths} months`
+    : "Timeline unavailable";
+  const complianceDetail = [
+    structured.civilDefense ? "Saudi Civil Defense review is required." : "Civil Defense is not mandatory for this scope, but should be confirmed locally.",
+    ...structured.warnings
+  ].join(" ");
+  const zoningDetail = structured.flags.length
+    ? structured.flags.join(" ")
+    : structured.passed.find((item) => item.includes("FAR")) || "No FAR violation detected by the SBC rules engine.";
+
+  return {
+    feasibility_score: score,
+    verdict,
+    summary: payload.report?.split("\n").find((line) => line && !line.startsWith("#")) || `${project.type} in ${project.city} was checked against deterministic SBC/Baladiya rules.`,
+    estimated_permit_timeline: timeline,
+    risks: {
+      compliance: {
+        level: structured.civilDefense || structured.warnings.length ? "Medium" : "Low",
+        confidence: "High",
+        detail: complianceDetail
+      },
+      cost: {
+        level: structured.costRange ? "Medium" : "Low",
+        confidence: structured.costRange ? "High" : "Low",
+        detail: `${cost}. ${structured.costRange?.note || ""}`
+      },
+      timeline: {
+        level: hasFlags ? "High" : hasWarnings ? "Medium" : "Low",
+        confidence: "High",
+        detail: `${timeline}. ${structured.permitTimeline?.note || ""}`
+      },
+      zoning: {
+        level: hasFlags ? "High" : "Low",
+        confidence: "High",
+        detail: zoningDetail
+      }
+    },
+    required_approvals: structured.approvals,
+    key_recommendations: [
+      ...structured.flags,
+      ...structured.warnings,
+      ...structured.passed
+    ].slice(0, 5),
+    vision_2030_note: "This report is generated from deterministic Saudi Building Code and Baladiya rules before any narrative AI layer.",
+    deterministic_flags: [
+      ...structured.flags.map((text) => ({ level: "warn", text })),
+      ...structured.warnings.map((text) => ({ level: "warn", text })),
+      ...structured.passed.map((text) => ({ level: "good", text }))
+    ],
+    data_freshness_note: `Data source: ${structured.dataSource}. Verify critical items with your local municipality before proceeding.`
+  };
 }
 
 function showLoading() {
@@ -1125,7 +1191,9 @@ async function analyze(event) {
     if (!response.ok) throw new Error(payload.error || "Analysis failed.");
 
     setUsedCount(getUsedCount() + 1);
-    const result = normalizeAnalysisResult(payload.result, project);
+    const result = payload.structured
+      ? buildResultFromSBCPayload(payload, project)
+      : normalizeAnalysisResult(payload.result, project);
     const reportId = persistReport(result, project);
     renderResults(result, project, true, reportId);
   } catch (error) {
@@ -1153,63 +1221,9 @@ document.querySelectorAll(".map-chip").forEach((pin) => {
 
 form.addEventListener("submit", analyze);
 
-document.getElementById("sample-report").addEventListener("click", () => {
-  const project = {
-    ...readProject(),
-    city: document.getElementById("city").value || "Riyadh",
-    type: document.getElementById("type").value || "Commercial building",
-    bua: document.getElementById("bua").value || "1800",
-    plot: document.getElementById("plot").value || "900",
-    floors: document.getElementById("floors").value || "4",
-    budget: document.getElementById("budget").value || "10M - 50M SAR",
-    zone: document.getElementById("zone").value || "Commercial (تجاري)"
-  };
-  const result = normalizeAnalysisResult(buildSampleResult(project), project);
-  const reportId = persistReport(result, project);
-  renderResults(result, project, true, reportId);
-});
-
 ["city", "type", "bua"].forEach((id) => {
-  document.getElementById(id).addEventListener("input", updateCostEstimate);
-  document.getElementById(id).addEventListener("change", updateCostEstimate);
-});
-
-document.getElementById("document-upload").addEventListener("change", async (event) => {
-  const file = event.target.files?.[0];
-  if (!file) return;
-
-  if (file.type.startsWith("text/") || /\.txt$/i.test(file.name)) {
-    const text = await file.text();
-    renderDocumentFindings(analyzeDocumentText(text, file.name));
-    return;
-  }
-
-  renderDocumentFindings(analyzeDocumentText(file.name, file.name));
-});
-
-document.getElementById("voice-input").addEventListener("click", () => {
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  const status = document.getElementById("voice-status");
-  if (!SpeechRecognition) {
-    status.textContent = "Voice input needs browser speech recognition. Production version should use Whisper.";
-    return;
-  }
-
-  const recognition = new SpeechRecognition();
-  recognition.lang = language === "ar" ? "ar-SA" : "en-US";
-  recognition.interimResults = false;
-  status.textContent = language === "ar" ? "جار الاستماع..." : "Listening...";
-  recognition.onresult = (event) => {
-    const transcript = event.results[0][0].transcript;
-    const details = document.getElementById("details");
-    details.value = details.value ? `${details.value}\n${transcript}` : transcript;
-    analyzeDocumentText(transcript, "voice input");
-    status.textContent = transcript;
-  };
-  recognition.onerror = () => {
-    status.textContent = "Voice capture stopped. Try again or use typed context.";
-  };
-  recognition.start();
+  document.getElementById(id)?.addEventListener("input", updateLiveCost);
+  document.getElementById(id)?.addEventListener("change", updateLiveCost);
 });
 
 languageToggle.addEventListener("click", () => {

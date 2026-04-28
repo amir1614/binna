@@ -64,38 +64,16 @@
         <form id="project-form" class="form-wrap">
           <div class="form-header">
             <h2 data-i18n="projectDetails">Project details</h2>
-            <span class="step-badge" data-i18n="proxyReady">Secure API proxy ready</span>
           </div>
           <div class="form-body">
-            <div class="assist-grid">
-              <section class="assist-card">
+            <div class="assist-grid" style="grid-template-columns: 1fr;">
+              <section class="assist-card" style="max-width: 360px;">
                 <div>
-                  <h3 data-i18n="docUploadTitle">Document intake</h3>
-                  <p data-i18n="docUploadText">Upload a deed, municipality letter, or notes file to extract clues and flag risks.</p>
-                </div>
-                <label class="file-drop" for="document-upload">
-                  <span data-i18n="docUploadCta">Choose document</span>
-                  <input id="document-upload" type="file" accept=".txt,.pdf,.doc,.docx,.dwg,.jpg,.jpeg,.png" />
-                </label>
-                <div id="document-findings" class="mini-list"></div>
-              </section>
-
-              <section class="assist-card">
-                <div>
-                  <h3 data-i18n="voiceTitle">Arabic voice input</h3>
-                  <p data-i18n="voiceText">Speak project details in Arabic or English and Binna will draft the context.</p>
-                </div>
-                <button class="btn-secondary" id="voice-input" type="button" data-i18n="voiceCta">Start voice input</button>
-                <div id="voice-status" class="mini-note" data-i18n="voiceIdle">Ready for speech</div>
-              </section>
-
-              <section class="assist-card">
-                <div>
-                  <h3 data-i18n="costTitle">Live cost range</h3>
-                  <p data-i18n="costText">Rough Saudi construction estimate based on type, size, and city.</p>
+                  <h3>Live cost estimate</h3>
+                  <p>Rough Saudi construction estimate based on type, size, and city.</p>
                 </div>
                 <div id="live-cost" class="cost-range">Enter BUA to estimate</div>
-                <div class="mini-note" data-i18n="costNote">Concept range only, excluding land and financing.</div>
+                <div class="mini-note">Concept range only, excluding land and financing. Source: AECOM 2023 + local market data.</div>
               </section>
             </div>
 
@@ -189,10 +167,6 @@
           </div>
           <button class="analyze-btn" id="analyze-button" type="submit" data-i18n="analyze">Analyze project feasibility</button>
         </form>
-        <div class="preview-row">
-          <button class="btn-secondary" id="sample-report" type="button" data-i18n="sampleReport">Preview sample report</button>
-          <span class="mini-note" data-i18n="sampleReportNote">Use this to see the output page before the AI key is connected.</span>
-        </div>
         <div id="results-section" class="results-section" hidden></div>
       </section>
 

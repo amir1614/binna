@@ -2,11 +2,14 @@
   "name": "binna",
   "version": "0.1.0",
   "private": true,
-  "type": "module",
   "scripts": {
     "dev": "node --env-file-if-exists=.env server.js",
     "start": "node server.js",
     "build": "echo \"No build step required\""
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.69.0",
+    "express": "^5.1.0"
   },
   "engines": {
     "node": ">=20"
