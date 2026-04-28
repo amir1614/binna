@@ -1,6 +1,4 @@
-const FREE_REPORT_LIMIT = 3;
 const historyKey = "binna:reports";
-const countKey = "binna:free-report-count";
 
 const translations = {
   en: {
@@ -10,7 +8,7 @@ const translations = {
     subhead: "AI-powered feasibility and risk analysis tailored to Saudi regulations, Baladiya requirements, and Vision 2030 zoning rules.",
     statTime: "Analysis time",
     statRisk: "Risk dimensions",
-    statReports: "Free reports left",
+    statReports: "Reports during beta",
     tabAnalyze: "Analyze",
     tabMap: "Map",
     tabIntelligence: "Intelligence",
@@ -95,14 +93,12 @@ const translations = {
     emptyHistory: "No saved reports yet.",
     openReport: "Open report",
     freePlan: "Free",
-    freePlanText: "3 feasibility reports for early evaluation.",
-    resetCounter: "Reset beta counter",
+    freePlanText: "Unlimited feasibility reports during beta.",
     proPlan: "Pro",
     month: "/month",
     proPlanText: "Unlimited reports, saved history, PDF export, and email delivery.",
     joinWaitlist: "Join waitlist",
     disclaimer: "This tool is AI-generated and for informational purposes only. Always verify findings with a licensed Saudi engineer and your local Baladiya office before proceeding.",
-    paywall: "You have used your 3 free reports. Upgrade to Pro for unlimited reports, PDF export, and saved history.",
     serverMissingKey: "The secure proxy is running, but the Anthropic API key is not configured on the server.",
     error: "Something went wrong analyzing your project. Please try again."
   },
@@ -113,7 +109,7 @@ const translations = {
     subhead: "تحليل جدوى ومخاطر مدعوم بالذكاء الاصطناعي ومصمم للأنظمة السعودية ومتطلبات البلدية ومناطق رؤية 2030.",
     statTime: "مدة التحليل",
     statRisk: "محاور المخاطر",
-    statReports: "تقارير مجانية متبقية",
+    statReports: "تقارير خلال التجربة",
     tabAnalyze: "تحليل",
     tabMap: "الخريطة",
     tabIntelligence: "الذكاء",
@@ -198,14 +194,12 @@ const translations = {
     emptyHistory: "لا توجد تقارير محفوظة بعد.",
     openReport: "فتح التقرير",
     freePlan: "مجاني",
-    freePlanText: "3 تقارير جدوى للتقييم الأولي.",
-    resetCounter: "إعادة عداد التجربة",
+    freePlanText: "تقارير جدوى غير محدودة خلال التجربة.",
     proPlan: "احترافي",
     month: "/شهرياً",
     proPlanText: "تقارير غير محدودة، سجل محفوظ، تصدير PDF، وإرسال بالبريد.",
     joinWaitlist: "انضم للقائمة",
     disclaimer: "هذه الأداة مولدة بالذكاء الاصطناعي ولغرض المعلومات فقط. تحقق دائماً مع مهندس سعودي معتمد ومكتب البلدية المحلي قبل تنفيذ أي مشروع.",
-    paywall: "استخدمت 3 تقارير مجانية. قم بالترقية إلى الباقة الاحترافية للتقارير غير المحدودة وتصدير PDF والسجل المحفوظ.",
     serverMissingKey: "الخادم الآمن يعمل، لكن مفتاح Anthropic غير مضبوط على الخادم.",
     error: "حدث خطأ أثناء تحليل المشروع. حاول مرة أخرى."
   }
@@ -433,7 +427,6 @@ const mapMarkers = new Map();
 
 const form = document.getElementById("project-form");
 const resultsEl = document.getElementById("results-section");
-const reportsLeftEl = document.getElementById("reports-left");
 const analyzeButton = document.getElementById("analyze-button");
 const languageToggle = document.getElementById("language-toggle");
 
@@ -460,20 +453,6 @@ function getReports() {
 
 function saveReports(reports) {
   localStorage.setItem(historyKey, JSON.stringify(reports.slice(0, 20)));
-}
-
-function getUsedCount() {
-  return Number(localStorage.getItem(countKey) || "0");
-}
-
-function setUsedCount(count) {
-  localStorage.setItem(countKey, String(count));
-  updateReportCount();
-}
-
-function updateReportCount() {
-  const left = Math.max(0, FREE_REPORT_LIMIT - getUsedCount());
-  reportsLeftEl.textContent = String(left);
 }
 
 function setSelectByText(selectId, matcher) {
@@ -649,7 +628,6 @@ function applyLanguage() {
     el.setAttribute("placeholder", t(el.dataset.i18nPlaceholder));
   });
 
-  updateReportCount();
   updateCostEstimate();
   renderHistory();
   renderIntelligenceLists();
@@ -824,16 +802,6 @@ function showError(message) {
       <small>${escapeHtml(message)}</small>
     </div>
   `;
-}
-
-function showPaywall() {
-  resultsEl.hidden = false;
-  resultsEl.innerHTML = `
-    <div class="paywall-box">
-      ${escapeHtml(t("paywall"))}
-    </div>
-  `;
-  switchPanel("plans");
 }
 
 function riskClass(level = "") {
@@ -1170,11 +1138,6 @@ function switchPanelFromHash() {
 async function analyze(event) {
   event.preventDefault();
 
-  if (getUsedCount() >= FREE_REPORT_LIMIT) {
-    showPaywall();
-    return;
-  }
-
   const project = readProject();
   analyzeButton.disabled = true;
   analyzeButton.textContent = t("analyzing");
@@ -1190,7 +1153,6 @@ async function analyze(event) {
     const payload = await response.json();
     if (!response.ok) throw new Error(payload.error || "Analysis failed.");
 
-    setUsedCount(getUsedCount() + 1);
     const result = payload.structured
       ? buildResultFromSBCPayload(payload, project)
       : normalizeAnalysisResult(payload.result, project);
@@ -1278,10 +1240,6 @@ document.getElementById("map-detail").addEventListener("click", (event) => {
 document.getElementById("clear-history").addEventListener("click", () => {
   saveReports([]);
   renderHistory();
-});
-
-document.getElementById("reset-free-counter").addEventListener("click", () => {
-  setUsedCount(0);
 });
 
 document.getElementById("whatsapp-draft").addEventListener("click", () => {
