@@ -203,194 +203,112 @@ const translations = {
   }
 };
 
-const regionData = {
+const REGION_DATA = {
   riyadh: {
-    cityValue: "Riyadh",
-    en: {
-      name: "Riyadh",
-      kicker: "Central growth engine",
-      summary: "Strong demand for residential, commercial, logistics, and mixed-use projects, with fast-moving approvals when zoning and infrastructure capacity are clear.",
-      demand: "Very high",
-      timeline: "3-6 months",
-      risk: "Medium",
-      watch: [
-        "Traffic impact and parking requirements can change commercial feasibility quickly.",
-        "Utility connections and neighborhood density limits should be checked before design work.",
-        "Diriyah and heritage-adjacent sites may require extra review."
-      ]
-    },
-    ar: {
-      name: "الرياض",
-      kicker: "محرك النمو المركزي",
-      summary: "طلب قوي على المشاريع السكنية والتجارية واللوجستية ومتعددة الاستخدامات، مع تسارع الموافقات عندما تكون الاشتراطات والبنية التحتية واضحة.",
-      demand: "مرتفع جداً",
-      timeline: "3-6 أشهر",
-      risk: "متوسط",
-      watch: [
-        "اشتراطات الحركة المرورية والمواقف قد تؤثر بسرعة على جدوى المشاريع التجارية.",
-        "يجب التحقق من خدمات المرافق وكثافة الحي قبل أعمال التصميم.",
-        "المواقع القريبة من الدرعية أو المناطق التراثية قد تحتاج مراجعة إضافية."
-      ]
-    }
+    label: 'Riyadh',
+    tag: 'CENTRAL GROWTH ENGINE',
+    description: 'Saudi Arabia\'s largest construction market. Residential villa and apartment demand is highest in north Riyadh districts. Commercial permitting is relatively fast when documents are complete.',
+    demandLevel: 'Very high',
+    permitTimeline: '2–5 months',
+    watchLevel: 'Medium',
+    watchPoints: [
+      'FAR overages are the #1 rejection reason in Al Malaz and Sulaimaniyah districts',
+      'Parking requirements increase significantly on King Fahd Road and Olaya Street frontage',
+      'Civil Defense comments are common on commercial projects above 3 floors',
+      'North Riyadh (Al Nakheel, Hittin) has faster approvals than central districts',
+    ],
+    coords: [24.7136, 46.6753],
+    zoom: 12,
   },
   jeddah: {
-    cityValue: "Jeddah",
-    en: {
-      name: "Jeddah",
-      kicker: "Red Sea gateway",
-      summary: "Hospitality, retail, and residential projects benefit from tourism and port activity, but coastal constraints and drainage history raise technical due diligence needs.",
-      demand: "High",
-      timeline: "4-8 months",
-      risk: "Medium-high",
-      watch: [
-        "Coastal and flood-management requirements can affect basement, podium, and MEP strategy.",
-        "Hospitality projects may need tourism, civil defense, and municipality alignment.",
-        "Older plots can carry demolition, access, or title-history complications."
-      ]
-    },
-    ar: {
-      name: "جدة",
-      kicker: "بوابة البحر الأحمر",
-      summary: "تستفيد مشاريع الضيافة والتجزئة والسكن من السياحة ونشاط الميناء، لكن القيود الساحلية وتصريف المياه ترفع أهمية الفحص الفني المبكر.",
-      demand: "مرتفع",
-      timeline: "4-8 أشهر",
-      risk: "متوسط إلى مرتفع",
-      watch: [
-        "اشتراطات الساحل وتصريف السيول قد تؤثر على الأقبية والمنصات وأنظمة الخدمات.",
-        "مشاريع الضيافة قد تحتاج تنسيقاً مع السياحة والدفاع المدني والبلدية.",
-        "الأراضي القديمة قد تحمل تعقيدات هدم أو وصول أو تاريخ ملكية."
-      ]
-    }
+    label: 'Jeddah',
+    tag: 'COASTAL COMMERCIAL HUB',
+    description: 'High hospitality and mixed-use demand driven by tourism and Hajj proximity. Coastal sites require additional drainage and municipality review.',
+    demandLevel: 'High',
+    permitTimeline: '3–7 months',
+    watchLevel: 'High',
+    watchPoints: [
+      'Coastal and waterfront sites require additional drainage and coastal authority review',
+      'Heritage districts near Al-Balad have strict height and facade restrictions',
+      'Parking revisions are the most common cause of permit delays in Jeddah',
+      'Hospitality projects near Corniche require tourism authority sign-off',
+    ],
+    coords: [21.4858, 39.1925],
+    zoom: 12,
   },
   neom: {
-    cityValue: "NEOM / Tabuk",
-    en: {
-      name: "NEOM / Tabuk",
-      kicker: "Giga-project frontier",
-      summary: "Major upside exists for logistics, workforce housing, hospitality, and specialist contractors, but procurement, environmental, and master-plan alignment risks are higher.",
-      demand: "Selective high",
-      timeline: "6-12 months",
-      risk: "High",
-      watch: [
-        "Master-plan compatibility and client-side procurement rules can matter more than normal municipal flow.",
-        "Environmental and coastal impact reviews may materially change schedule.",
-        "Remote logistics and labor accommodation assumptions should be costed conservatively."
-      ]
-    },
-    ar: {
-      name: "نيوم / تبوك",
-      kicker: "واجهة المشاريع العملاقة",
-      summary: "توجد فرص كبيرة في اللوجستيات وسكن العمالة والضيافة والمقاولين المتخصصين، لكن مخاطر المشتريات والبيئة والمواءمة مع المخطط العام أعلى.",
-      demand: "مرتفع انتقائياً",
-      timeline: "6-12 شهراً",
-      risk: "مرتفع",
-      watch: [
-        "مواءمة المخطط العام وقواعد المشتريات قد تكون أهم من مسار البلدية التقليدي.",
-        "المراجعات البيئية والساحلية قد تغير الجدول بشكل كبير.",
-        "يجب تسعير اللوجستيات البعيدة وسكن العمالة بتحفظ."
-      ]
-    }
+    label: 'NEOM / Tabuk',
+    tag: 'GIGA-PROJECT ZONE',
+    description: 'Entirely separate regulatory framework from standard Saudi municipalities. Private developers outside NEOM masterplan boundaries follow standard Tabuk municipality rules.',
+    demandLevel: 'Specialist only',
+    permitTimeline: 'Varies significantly',
+    watchLevel: 'Very high',
+    watchPoints: [
+      'NEOM has its own regulatory authority — standard SBC rules do not fully apply inside NEOM boundaries',
+      'Private development outside NEOM boundaries follows Tabuk Amanah rules',
+      'Construction costs are 25–40% higher than Riyadh due to logistics and remote location',
+      'Engage a NEOM-specialist consultant before any feasibility work',
+    ],
+    coords: [28.0, 35.2],
+    zoom: 8,
   },
   eastern: {
-    cityValue: "Dammam / Eastern Province",
-    en: {
-      name: "Eastern Province",
-      kicker: "Industrial and logistics base",
-      summary: "Industrial, warehousing, and staff housing projects are well matched to the region, with added attention needed for environmental, civil defense, and utility loads.",
-      demand: "High",
-      timeline: "3-7 months",
-      risk: "Medium",
-      watch: [
-        "Industrial uses need early checks on environmental classification and hazardous materials.",
-        "Warehouse fire strategy and civil defense requirements can drive layout changes.",
-        "Power load, truck access, and port connectivity are central feasibility inputs."
-      ]
-    },
-    ar: {
-      name: "المنطقة الشرقية",
-      kicker: "قاعدة صناعية ولوجستية",
-      summary: "تناسب المنطقة المشاريع الصناعية والمستودعات وسكن الموظفين، مع ضرورة الانتباه للبيئة والدفاع المدني وأحمال المرافق.",
-      demand: "مرتفع",
-      timeline: "3-7 أشهر",
-      risk: "متوسط",
-      watch: [
-        "الاستخدامات الصناعية تحتاج تحققاً مبكراً من التصنيف البيئي والمواد الخطرة.",
-        "استراتيجية الحريق ومتطلبات الدفاع المدني قد تغير التخطيط الداخلي للمستودعات.",
-        "أحمال الكهرباء ووصول الشاحنات والربط بالموانئ عناصر أساسية في الجدوى."
-      ]
-    }
+    label: 'Eastern Province',
+    tag: 'INDUSTRIAL & RESIDENTIAL',
+    description: 'Dammam, Al Khobar, and Dhahran form the main urban core. Strong industrial and logistics demand alongside residential growth. Generally faster approvals than Riyadh for industrial projects.',
+    demandLevel: 'High',
+    permitTimeline: '2–4 months',
+    watchLevel: 'Low',
+    watchPoints: [
+      'Industrial projects near Jubail industrial city require MODON coordination',
+      'Residential approvals in Al Khobar are among the fastest in Saudi Arabia',
+      'SEC connections for high-load industrial projects can add 2–3 months',
+      'Aramco proximity zones have additional security and setback requirements',
+    ],
+    coords: [26.4207, 50.0888],
+    zoom: 11,
   },
   qiddiya: {
-    cityValue: "Qiddiya",
-    en: {
-      name: "Qiddiya",
-      kicker: "Entertainment cluster",
-      summary: "Entertainment, hospitality, retail, and contractor-support projects can benefit from destination growth, but approvals depend heavily on master developer rules.",
-      demand: "Emerging high",
-      timeline: "5-10 months",
-      risk: "Medium-high",
-      watch: [
-        "Brand, visitor-flow, and master-developer controls can shape what is permitted.",
-        "Event safety, crowd movement, and parking assumptions should be tested early.",
-        "Temporary works and contractor facilities may have different approval routes."
-      ]
-    },
-    ar: {
-      name: "القدية",
-      kicker: "تجمع الترفيه",
-      summary: "يمكن لمشاريع الترفيه والضيافة والتجزئة وخدمات المقاولين الاستفادة من نمو الوجهة، لكن الموافقات تعتمد كثيراً على اشتراطات المطور الرئيسي.",
-      demand: "مرتفع وناشئ",
-      timeline: "5-10 أشهر",
-      risk: "متوسط إلى مرتفع",
-      watch: [
-        "ضوابط العلامة التجارية وحركة الزوار والمطور الرئيسي قد تحدد المسموح.",
-        "السلامة وحركة الحشود والمواقف يجب اختبارها مبكراً.",
-        "الأعمال المؤقتة ومرافق المقاولين قد تسلك مسارات موافقة مختلفة."
-      ]
-    }
+    label: 'Qiddiya',
+    tag: 'ENTERTAINMENT GIGA-PROJECT',
+    description: 'Qiddiya Investment Company controls development within the masterplan boundary. Adjacent private land follows Riyadh Amanah rules but may have proximity restrictions.',
+    demandLevel: 'Masterplan controlled',
+    permitTimeline: 'QIC approval required',
+    watchLevel: 'Very high',
+    watchPoints: [
+      'Development inside Qiddiya boundary requires Qiddiya Investment Company approval',
+      'Adjacent private land may have height and use restrictions due to proximity',
+      'Entertainment and hospitality use classifications require Tourism Authority coordination',
+      'Infrastructure connections are being built — confirm utility availability before design',
+    ],
+    coords: [24.5247, 46.2969],
+    zoom: 11,
   },
   redsea: {
-    cityValue: "Red Sea Project",
-    en: {
-      name: "Red Sea Project",
-      kicker: "Luxury coastal destination",
-      summary: "Premium hospitality and marine-adjacent work carry strong opportunity, with strict environmental, coastal, and sustainability expectations.",
-      demand: "Selective high",
-      timeline: "6-12 months",
-      risk: "High",
-      watch: [
-        "Environmental sensitivity can affect site access, materials, and construction methods.",
-        "Hospitality quality standards may require higher contingency and specialist suppliers.",
-        "Marine, coastal, and protected-area interfaces should be clarified before concept design."
-      ]
-    },
-    ar: {
-      name: "مشروع البحر الأحمر",
-      kicker: "وجهة ساحلية فاخرة",
-      summary: "تحمل مشاريع الضيافة الفاخرة والأعمال القريبة من البحر فرصاً قوية، مع توقعات صارمة للبيئة والساحل والاستدامة.",
-      demand: "مرتفع انتقائياً",
-      timeline: "6-12 شهراً",
-      risk: "مرتفع",
-      watch: [
-        "الحساسية البيئية قد تؤثر على الوصول للموقع والمواد وطرق التنفيذ.",
-        "معايير الضيافة الفاخرة قد تتطلب احتياطياً أعلى وموردين متخصصين.",
-        "يجب توضيح الواجهات البحرية والساحلية والمناطق المحمية قبل التصميم المبدئي."
-      ]
-    }
-  }
+    label: 'Red Sea Project',
+    tag: 'LUXURY TOURISM ZONE',
+    description: 'Red Sea Global controls all development inside the project boundary. Extremely high construction costs. Private land adjacent to the project follows standard Tabuk/AlUla municipality rules.',
+    demandLevel: 'RSG controlled',
+    permitTimeline: 'RSG approval required',
+    watchLevel: 'Very high',
+    watchPoints: [
+      'All development inside Red Sea Project requires Red Sea Global approval',
+      'Environmental impact requirements are stricter than standard SBC — coral and marine protections apply',
+      'Construction costs are the highest in Saudi Arabia for this region',
+      'Private land near the boundary follows AlUla or Tabuk Amanah rules',
+    ],
+    coords: [25.0, 37.0],
+    zoom: 8,
+  },
 };
 
-const mapPlaces = [
-  { region: "riyadh", label: "Riyadh", lat: 24.7136, lng: 46.6753, zoom: 12 },
-  { region: "jeddah", label: "Jeddah", lat: 21.4858, lng: 39.1925, zoom: 12 },
-  { region: "neom", label: "NEOM / Tabuk", lat: 28.3835, lng: 36.5662, zoom: 10 },
-  { region: "eastern", label: "Dammam / Khobar", lat: 26.4207, lng: 50.0888, zoom: 11 },
-  { region: "qiddiya", label: "Qiddiya", lat: 24.6333, lng: 46.3167, zoom: 12 },
-  { region: "redsea", label: "Red Sea Project", lat: 25.6427, lng: 37.6361, zoom: 10 },
-  { region: "mecca", label: "Mecca", lat: 21.3891, lng: 39.8579, zoom: 12 },
-  { region: "medina", label: "Medina", lat: 24.5247, lng: 39.5692, zoom: 12 },
-  { region: "diriyah", label: "Diriyah", lat: 24.7344, lng: 46.5756, zoom: 13 }
-];
+const mapPlaces = Object.entries(REGION_DATA).map(([region, data]) => ({
+  region,
+  label: data.label,
+  lat: data.coords[0],
+  lng: data.coords[1],
+  zoom: data.zoom,
+}));
 
 const consultantMatches = [
   { name: "Riyadh Permit Studio", specialty: "Balady submissions, zoning review, civil defense coordination" },
@@ -439,6 +357,18 @@ function escapeHtml(value = "") {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
+}
+
+function getRegionCityValue(region) {
+  const cityValues = {
+    riyadh: "Riyadh",
+    jeddah: "Jeddah",
+    neom: "NEOM / Tabuk",
+    eastern: "Dammam / Eastern Province",
+    qiddiya: "Qiddiya",
+    redsea: "Red Sea Project",
+  };
+  return cityValues[region] || REGION_DATA[region]?.label || "";
 }
 
 function getReports() {
@@ -1036,34 +966,33 @@ function renderRegionDetail() {
   const detail = document.getElementById("map-detail");
   if (!detail) return;
 
-  const region = regionData[activeRegion];
-  const copy = region[language] || region.en;
+  const region = REGION_DATA[activeRegion];
 
   document.querySelectorAll(".map-chip").forEach((pin) => {
     pin.classList.toggle("selected", pin.dataset.region === activeRegion);
   });
 
   detail.innerHTML = `
-    <div class="map-kicker">${escapeHtml(copy.kicker)}</div>
-    <h3>${escapeHtml(copy.name)}</h3>
-    <p>${escapeHtml(copy.summary)}</p>
+    <div class="map-kicker">${escapeHtml(region.tag)}</div>
+    <h3>${escapeHtml(region.label)}</h3>
+    <p>${escapeHtml(region.description)}</p>
     <button class="btn-primary map-prefill-button" type="button" id="map-prefill">${escapeHtml(t("mapPrefill"))}</button>
     <div class="map-metrics">
       <div class="map-metric">
-        <strong>${escapeHtml(copy.demand)}</strong>
+        <strong>${escapeHtml(region.demandLevel)}</strong>
         <span>${escapeHtml(t("mapContext"))}</span>
       </div>
       <div class="map-metric">
-        <strong>${escapeHtml(copy.timeline)}</strong>
+        <strong>${escapeHtml(region.permitTimeline)}</strong>
         <span>${escapeHtml(t("mapPermit"))}</span>
       </div>
       <div class="map-metric">
-        <strong>${escapeHtml(copy.risk)}</strong>
+        <strong>${escapeHtml(region.watchLevel)}</strong>
         <span>${escapeHtml(t("mapRisk"))}</span>
       </div>
     </div>
     <ul class="map-list">
-      ${copy.watch.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
+      ${region.watchPoints.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
     </ul>
   `;
 }
@@ -1105,7 +1034,7 @@ function initializeSaudiMap() {
       .bindPopup(`<strong>${escapeHtml(place.label)}</strong>`);
 
     marker.on("click", () => {
-      activeRegion = regionData[place.region] ? place.region : activeRegion;
+      activeRegion = REGION_DATA[place.region] ? place.region : activeRegion;
       renderRegionDetail();
       focusMapRegion(place.region, false);
     });
@@ -1121,7 +1050,7 @@ function initializeSaudiMap() {
       }))
       .sort((a, b) => a.distance - b.distance)[0];
 
-    if (nearest?.region && regionData[nearest.region]) {
+    if (nearest?.region && REGION_DATA[nearest.region]) {
       activeRegion = nearest.region;
       renderRegionDetail();
       document.getElementById("details").value = `Map pin: ${event.latlng.lat.toFixed(5)}, ${event.latlng.lng.toFixed(5)} near ${nearest.label}. Real zoning lookup should connect this coordinate to Balady/Amanah GIS layers.`;
@@ -1133,10 +1062,10 @@ function initializeSaudiMap() {
 
 function focusMapRegion(region, openPopup = true) {
   if (!saudiMap) return;
-  const place = mapPlaces.find((item) => item.region === region);
-  if (!place) return;
+  const regionInfo = REGION_DATA[region];
+  if (!regionInfo) return;
 
-  saudiMap.flyTo([place.lat, place.lng], place.zoom, {
+  saudiMap.flyTo(regionInfo.coords, regionInfo.zoom, {
     animate: true,
     duration: 0.7
   });
@@ -1282,7 +1211,7 @@ document.getElementById("history-list").addEventListener("click", (event) => {
 
 document.getElementById("map-detail").addEventListener("click", (event) => {
   if (!event.target.closest("#map-prefill")) return;
-  document.getElementById("city").value = regionData[activeRegion].cityValue;
+  document.getElementById("city").value = getRegionCityValue(activeRegion);
   switchPanel("analyzer");
   form.scrollIntoView({ behavior: "smooth", block: "start" });
 });
