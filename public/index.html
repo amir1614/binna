@@ -45,8 +45,8 @@
           <span class="stat-label" data-i18n="statRisk">Risk dimensions</span>
         </div>
         <div class="stat">
-          <span class="stat-num">Unlimited</span>
-          <span class="stat-label" data-i18n="statReports">Reports during beta</span>
+          <span class="stat-num">6</span>
+          <span class="stat-label" data-i18n="statReports">Features in development</span>
         </div>
       </div>
     </section>
@@ -206,65 +206,76 @@
 
       <section id="panel-intelligence" class="panel" role="tabpanel">
         <div class="intel-board">
+          <div style="background: #FFF8E7; border: 1px solid #F5C842; border-radius: 10px; padding: 12px 16px; font-size: 13px; margin-bottom: 20px;">
+            🚧 This tab shows features currently in development. Only features marked as active are live.
+          </div>
           <section class="section-card">
             <div class="section-heading inline">
               <div>
-                <h2 data-i18n="intelTitle">Construction intelligence layer</h2>
-                <p data-i18n="intelSubtitle">Workflow modules that turn a one-time feasibility report into a daily tool.</p>
+                <h2 data-i18n="intelTitle">Coming soon features</h2>
+                <p data-i18n="intelSubtitle">These features are in development. We'll notify you when they're live.</p>
               </div>
             </div>
             <div class="feature-grid">
               <article class="feature-card">
                 <span class="feature-kicker">01</span>
-                <h3 data-i18n="featureDocs">AI document review</h3>
-                <p data-i18n="featureDocsText">Extract deed constraints, municipality comments, drawing notes, setbacks, easements, and missing approvals.</p>
+                <span class="step-badge" style="display: inline-block; margin-bottom: 10px; border-color: var(--border); color: var(--text-soft); background: var(--surface-warm);">Coming soon</span>
+                <h3 data-i18n="featureDocs" style="opacity: 0.5;">AI document review</h3>
+                <p data-i18n="featureDocsText" style="opacity: 0.5;">Extract deed constraints, municipality comments, drawing notes, setbacks, easements, and missing approvals.</p>
               </article>
               <article class="feature-card">
                 <span class="feature-kicker">02</span>
-                <h3 data-i18n="featureZoning">Real zoning lookup</h3>
-                <p data-i18n="featureZoningText">Drop a pin on the map, then connect Balady/Amanah GIS layers for classification and district rules.</p>
+                <span class="step-badge" style="display: inline-block; margin-bottom: 10px; border-color: var(--border); color: var(--text-soft); background: var(--surface-warm);">Coming soon</span>
+                <h3 data-i18n="featureZoning" style="opacity: 0.5;">Real zoning lookup</h3>
+                <p data-i18n="featureZoningText" style="opacity: 0.5;">Drop a pin on the map, then connect Balady/Amanah GIS layers for classification and district rules.</p>
               </article>
               <article class="feature-card">
                 <span class="feature-kicker">03</span>
-                <h3 data-i18n="featureBenchmarks">Comparable projects</h3>
-                <p data-i18n="featureBenchmarksText">Show similar approvals from anonymized project history as Binna collects real user data.</p>
+                <span class="step-badge" style="display: inline-block; margin-bottom: 10px; border-color: var(--border); color: var(--text-soft); background: var(--surface-warm);">Coming soon</span>
+                <h3 data-i18n="featureBenchmarks" style="opacity: 0.5;">Comparable projects</h3>
+                <p data-i18n="featureBenchmarksText" style="opacity: 0.5;">Show similar approvals from anonymized project history as Binna collects real user data.</p>
               </article>
               <article class="feature-card">
                 <span class="feature-kicker">04</span>
-                <h3 data-i18n="featureWhatsApp">WhatsApp delivery</h3>
-                <p data-i18n="featureWhatsAppText">Prepare a formatted report summary for WhatsApp Business API delivery.</p>
+                <span class="step-badge" style="display: inline-block; margin-bottom: 10px; border-color: var(--border); color: var(--text-soft); background: var(--surface-warm);">Coming soon</span>
+                <h3 data-i18n="featureWhatsApp" style="opacity: 0.5;">WhatsApp delivery</h3>
+                <p data-i18n="featureWhatsAppText" style="opacity: 0.5;">Prepare a formatted report summary for WhatsApp Business API delivery.</p>
               </article>
             </div>
           </section>
 
           <section class="workflow-grid">
             <article class="section-card">
-              <h3 data-i18n="trackerTitle">Permit tracker</h3>
+              <h3><span data-i18n="trackerTitle">Permit tracker</span> <span class="step-badge" style="margin-inline-start: 8px; border-color: var(--border); color: var(--text-soft); background: var(--surface-warm);">Coming soon</span></h3>
               <div class="tracker">
-                <button class="tracker-step done" type="button">Applied</button>
-                <button class="tracker-step active" type="button">Under Review</button>
-                <button class="tracker-step" type="button">Civil Defense</button>
-                <button class="tracker-step" type="button">Approved</button>
+                <button class="tracker-step" type="button" disabled style="pointer-events: none; opacity: 0.6;">Applied</button>
+                <button class="tracker-step" type="button" disabled style="pointer-events: none; opacity: 0.6;">Under Review</button>
+                <button class="tracker-step" type="button" disabled style="pointer-events: none; opacity: 0.6;">Civil Defense</button>
+                <button class="tracker-step" type="button" disabled style="pointer-events: none; opacity: 0.6;">Approved</button>
               </div>
             </article>
 
             <article class="section-card">
-              <h3 data-i18n="whatsappTitle">WhatsApp report</h3>
+              <h3><span data-i18n="whatsappTitle">WhatsApp report</span> <span class="step-badge" style="margin-inline-start: 8px; border-color: var(--border); color: var(--text-soft); background: var(--surface-warm);">Coming soon</span></h3>
               <div class="field compact">
                 <label for="whatsapp-number" data-i18n="whatsappLabel">Recipient number</label>
                 <input id="whatsapp-number" type="tel" placeholder="+966 5X XXX XXXX" />
               </div>
-              <button class="btn-primary" id="whatsapp-draft" type="button" data-i18n="whatsappDraft">Prepare WhatsApp draft</button>
-              <p id="whatsapp-status" class="mini-note"></p>
+              <button class="btn-primary" id="whatsapp-draft" type="button" data-i18n="whatsappDraft" disabled style="background: var(--surface-warm); color: var(--text-soft); box-shadow: none; cursor: not-allowed;">Prepare WhatsApp draft</button>
+              <p id="whatsapp-status" class="mini-note" style="margin-top: 8px;">WhatsApp Business API integration in progress.</p>
             </article>
 
             <article class="section-card">
               <h3 data-i18n="marketTitle">Verified consultants</h3>
-              <div id="consultant-list" class="consultant-list"></div>
+              <p style="color: var(--text-secondary); font-size: 14px; margin-top: 8px;">
+                We are currently verifying Saudi permit consultants and engineering offices. 
+                Verified partners will appear here once confirmed.
+              </p>
+              <span class="step-badge" style="margin-top: 12px; display: inline-block;">Coming soon</span>
             </article>
 
             <article class="section-card">
-              <h3 data-i18n="collabTitle">Team collaboration</h3>
+              <h3 data-i18n="collabTitle">Project notes</h3>
               <div class="comment-box">
                 <input id="team-comment" type="text" data-i18n-placeholder="commentPlaceholder" placeholder="Add a note for architect, engineer, or investor" />
                 <button class="btn-secondary" id="add-comment" type="button" data-i18n="addComment">Add</button>
@@ -273,7 +284,7 @@
             </article>
 
             <article class="section-card">
-              <h3 data-i18n="alertsTitle">Risk change alerts</h3>
+              <h3><span data-i18n="alertsTitle">Risk change alerts</span> <span class="step-badge" style="margin-inline-start: 8px; border-color: var(--border); color: var(--text-soft); background: var(--surface-warm);">Coming soon</span></h3>
               <label class="toggle-row">
                 <input id="risk-alerts" type="checkbox" />
                 <span data-i18n="alertsText">Notify me when regulations or zoning assumptions change for saved projects.</span>
@@ -283,7 +294,10 @@
 
             <article class="section-card">
               <h3 data-i18n="benchmarksTitle">Comparable approvals</h3>
-              <div id="benchmark-list" class="mini-list"></div>
+              <p style="color: var(--text-secondary); font-size: 14px; margin-top: 8px;">
+                Real approval timelines from similar Saudi projects will appear here as Binna collects verified data from users.
+              </p>
+              <span class="step-badge" style="margin-top: 12px; display: inline-block;">Coming soon</span>
             </article>
           </section>
         </div>

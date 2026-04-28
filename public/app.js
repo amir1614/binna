@@ -8,7 +8,7 @@ const translations = {
     subhead: "AI-powered feasibility and risk analysis tailored to Saudi regulations, Baladiya requirements, and Vision 2030 zoning rules.",
     statTime: "Analysis time",
     statRisk: "Risk dimensions",
-    statReports: "Reports during beta",
+    statReports: "Features in development",
     tabAnalyze: "Analyze",
     tabMap: "Map",
     tabIntelligence: "Intelligence",
@@ -34,8 +34,8 @@ const translations = {
     costTitle: "Live cost range",
     costText: "Rough Saudi construction estimate based on type, size, and city.",
     costNote: "Concept range only, excluding land and financing.",
-    intelTitle: "Construction intelligence layer",
-    intelSubtitle: "Workflow modules that turn a one-time feasibility report into a daily tool.",
+    intelTitle: "Coming soon features",
+    intelSubtitle: "These features are in development. We'll notify you when they're live.",
     featureDocs: "AI document review",
     featureDocsText: "Extract deed constraints, municipality comments, drawing notes, setbacks, easements, and missing approvals.",
     featureZoning: "Real zoning lookup",
@@ -49,7 +49,7 @@ const translations = {
     whatsappLabel: "Recipient number",
     whatsappDraft: "Prepare WhatsApp draft",
     marketTitle: "Verified consultants",
-    collabTitle: "Team collaboration",
+    collabTitle: "Project notes",
     commentPlaceholder: "Add a note for architect, engineer, or investor",
     addComment: "Add",
     alertsTitle: "Risk change alerts",
@@ -108,7 +108,7 @@ const translations = {
     subhead: "تحليل جدوى ومخاطر مدعوم بالذكاء الاصطناعي ومصمم للأنظمة السعودية ومتطلبات البلدية ومناطق رؤية 2030.",
     statTime: "مدة التحليل",
     statRisk: "محاور المخاطر",
-    statReports: "تقارير خلال التجربة",
+    statReports: "ميزات قيد التطوير",
     tabAnalyze: "تحليل",
     tabMap: "الخريطة",
     tabIntelligence: "الذكاء",
@@ -134,8 +134,8 @@ const translations = {
     costTitle: "نطاق تكلفة مباشر",
     costText: "تقدير أولي لتكلفة البناء حسب النوع والمساحة والمدينة.",
     costNote: "نطاق مبدئي فقط ولا يشمل الأرض أو التمويل.",
-    intelTitle: "طبقة ذكاء البناء",
-    intelSubtitle: "وحدات تحول تقرير الجدوى إلى أداة عمل يومية.",
+    intelTitle: "ميزات قريباً",
+    intelSubtitle: "هذه الميزات قيد التطوير. سنخبرك عند إطلاقها.",
     featureDocs: "مراجعة المستندات بالذكاء الاصطناعي",
     featureDocsText: "استخراج قيود الصك وملاحظات البلدية والارتدادات والحقوق والموافقات الناقصة.",
     featureZoning: "استعلام النطاق العمراني",
@@ -149,7 +149,7 @@ const translations = {
     whatsappLabel: "رقم المستلم",
     whatsappDraft: "جهز مسودة واتساب",
     marketTitle: "استشاريون معتمدون",
-    collabTitle: "تعاون الفريق",
+    collabTitle: "ملاحظات المشروع",
     commentPlaceholder: "أضف ملاحظة للمعماري أو المهندس أو المستثمر",
     addComment: "إضافة",
     alertsTitle: "تنبيهات تغير المخاطر",
@@ -1292,12 +1292,7 @@ document.getElementById("clear-history").addEventListener("click", () => {
   renderHistory();
 });
 
-document.getElementById("whatsapp-draft").addEventListener("click", () => {
-  const number = document.getElementById("whatsapp-number").value.trim();
-  document.getElementById("whatsapp-status").textContent = number
-    ? `Draft ready for ${number}. Connect WhatsApp Business API to send.`
-    : "Enter a recipient number to prepare the WhatsApp report draft.";
-});
+document.getElementById("whatsapp-draft").addEventListener("click", () => {});
 
 document.getElementById("add-comment").addEventListener("click", () => {
   const input = document.getElementById("team-comment");
@@ -1309,9 +1304,8 @@ document.getElementById("add-comment").addEventListener("click", () => {
 });
 
 document.getElementById("risk-alerts").addEventListener("change", (event) => {
-  document.getElementById("alerts-status").textContent = event.target.checked
-    ? "Alerts enabled for this project."
-    : "";
+  event.target.checked = false;
+  document.getElementById("alerts-status").textContent = "We'll email you when this feature launches — make sure your email is saved in Plans.";
 });
 
 applyLanguage();
