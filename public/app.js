@@ -4,8 +4,8 @@ const translations = {
   en: {
     beta: "Free Beta",
     heroTag: "Saudi Arabia · Vision 2030",
-    headline: "Know if your project is feasible before you build",
-    subhead: "AI-powered feasibility and risk analysis tailored to Saudi regulations, Baladiya requirements, and Vision 2030 zoning rules.",
+    headline: "Build with certainty",
+    subhead: "Feasibility, risk, and compliance — before construction begins.",
     statTime: "Analysis time",
     statRisk: "Risk dimensions",
     statReports: "Features in development",
@@ -104,8 +104,8 @@ const translations = {
   ar: {
     beta: "تجربة مجانية",
     heroTag: "السعودية · رؤية 2030",
-    headline: "اعرف جدوى مشروعك قبل أن تبدأ البناء",
-    subhead: "تحليل جدوى ومخاطر مدعوم بالذكاء الاصطناعي ومصمم للأنظمة السعودية ومتطلبات البلدية ومناطق رؤية 2030.",
+    headline: "ابنِ بثقة",
+    subhead: "الجدوى والمخاطر والامتثال — قبل أن يبدأ البناء.",
     statTime: "مدة التحليل",
     statRisk: "محاور المخاطر",
     statReports: "ميزات قيد التطوير",

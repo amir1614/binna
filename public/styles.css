@@ -168,13 +168,13 @@ nav {
 }
 
 .hero h1 {
-  max-width: 780px;
+  max-width: 720px;
   margin: 0 auto 18px;
   color: var(--text);
-  font-size: 54px;
+  font-size: clamp(44px, 8vw, 76px);
   font-weight: 700;
   letter-spacing: 0;
-  line-height: 1.04;
+  line-height: 0.98;
 }
 
 .hero p {
@@ -1404,7 +1404,7 @@ footer a {
   }
 
   .hero h1 {
-    font-size: 40px;
+    font-size: clamp(40px, 12vw, 58px);
   }
 
   .stats {
@@ -1469,7 +1469,7 @@ footer a {
   }
 
   .hero h1 {
-    font-size: 34px;
+    font-size: clamp(38px, 13vw, 48px);
   }
 
   .hero p {
